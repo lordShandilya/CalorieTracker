@@ -1,131 +1,74 @@
-"""
-AI routes: image-based nutrition extraction and conversational chat interface.
-Uses Claude API via the Anthropic artifact API endpoint pattern.
-"""
-
 import base64
 import json
 import os
 from flask import Blueprint, request, jsonify, g
 from database import get_db
 from auth import require_auth
+from google import genai
+from google.genai import types
 
 ai_bp = Blueprint("ai", __name__, url_prefix="/api/ai")
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+# Initialize the Gemini Client
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+client = genai.Client(api_key="AIzaSyATpL3WcwN9KRDffQOnX_QB46tD2EbqVTU")
 
-
-def call_claude(messages: list, system: str = "", max_tokens: int = 1024) -> str:
-    """Call Claude API and return text response."""
-    import urllib.request
-    import urllib.error
-
-    payload = {
-        "model": "claude-opus-4-6",
-        "max_tokens": max_tokens,
-        "messages": messages,
-    }
-    if system:
-        payload["system"] = system
-
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=json.dumps(payload).encode(),
-        headers={
-            "Content-Type": "application/json",
-            "x-api-key": ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-        },
-        method="POST"
-    )
-
+def call_gemini(contents: list, system_instruction: str = "", max_tokens: int = 2048) -> str:
+    """Call Gemini API using the official google-genai SDK."""
+    model_id = "gemini-3-flash-preview"
+    
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            result = json.loads(resp.read())
-            return result["content"][0]["text"]
-    except urllib.error.HTTPError as e:
-        error_body = e.read().decode()
-        raise Exception(f"Claude API error {e.code}: {error_body}")
+        # Configuration including system instructions and token limits
+        config = types.GenerateContentConfig(
+            system_instruction=system_instruction,
+            max_output_tokens=max_tokens,
+            temperature=0.2, # Lower temperature for stable JSON extraction
+        )
+
+        response = client.models.generate_content(
+            model=model_id,
+            contents=contents,
+            config=config
+        )
+
+        if not response.text:
+            raise Exception("Empty response from Gemini API")
+            
+        return response.text
+
+    except Exception as e:
+        # The SDK handles the HTTP details, so we catch general exceptions here
+        raise Exception(f"Gemini SDK Error: {str(e)}")
 
 
 @ai_bp.route("/analyze-image", methods=["POST"])
 @require_auth
 def analyze_image():
-    """
-    Analyze a food/nutrition label image and extract nutritional info.
-    Accepts multipart form data with an 'image' file field.
-    """
     if "image" not in request.files:
         return jsonify({"error": "image file required"}), 400
 
     file = request.files["image"]
-    if not file.filename:
-        return jsonify({"error": "No file selected"}), 400
-
-    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
     content_type = file.content_type or "image/jpeg"
-    if content_type not in allowed_types:
-        return jsonify({"error": "Image must be JPEG, PNG, GIF, or WebP"}), 400
-
-    # Read and encode image
     image_data = file.read()
-    if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
-        return jsonify({"error": "Image too large (max 10MB)"}), 400
 
-    image_b64 = base64.b64encode(image_data).decode()
+    system_prompt = """You are a nutrition extraction assistant. Extract nutritional info and return it as valid JSON ONLY.
+    Structure: { "food_name": "str", "quantity": num, "quantity_unit": "str", "calories": num, "protein_g": num, 
+    "carbs_g": num, "fat_g": num, "fiber_g": num, "sugar_g": num, "sodium_mg": num, "confidence": "high|medium|low" }"""
 
-    system_prompt = """You are a nutrition extraction assistant. When given a food image or nutrition label, 
-extract nutritional information and return it as valid JSON only (no markdown, no explanation).
-Return this exact structure:
-{
-  "food_name": "string",
-  "quantity": number,
-  "quantity_unit": "string (g, ml, oz, serving, etc.)",
-  "calories": number,
-  "protein_g": number,
-  "carbs_g": number,
-  "fat_g": number,
-  "fiber_g": number,
-  "sugar_g": number,
-  "sodium_mg": number,
-  "vitamin_c_mg": number,
-  "vitamin_d_iu": number,
-  "calcium_mg": number,
-  "iron_mg": number,
-  "confidence": "high|medium|low",
-  "notes": "any relevant notes about the extraction"
-}
-If a value cannot be determined, use 0. Estimate reasonable values for visible food if no label is present."""
-
-    messages = [{
-        "role": "user",
-        "content": [
-            {
-                "type": "image",
-                "source": {
-                    "type": "base64",
-                    "media_type": content_type,
-                    "data": image_b64
-                }
-            },
-            {
-                "type": "text",
-                "text": "Please analyze this food image or nutrition label and extract the nutritional information as JSON."
-            }
-        ]
-    }]
+    # SDK uses a list of parts; images are passed as bytes + mime_type
+    contents = [
+        types.Part.from_bytes(data=image_data, mime_type=content_type),
+        "Analyze this food image or nutrition label and extract the info as JSON."
+    ]
 
     try:
-        response_text = call_claude(messages, system=system_prompt, max_tokens=1024)
-        # Clean up response in case of markdown fences
-        response_text = response_text.strip()
-        if response_text.startswith("```"):
-            response_text = response_text.split("\n", 1)[1].rsplit("```", 1)[0]
-
-        nutrition_data = json.loads(response_text)
-        return jsonify(nutrition_data)
-    except json.JSONDecodeError:
-        return jsonify({"error": "Failed to parse nutritional data from image"}), 422
+        response_text = call_gemini(contents, system_instruction=system_prompt)
+        
+        # Clean Markdown formatting if present
+        if "```" in response_text:
+            response_text = response_text.split("```")[1].replace("json", "").strip()
+            
+        return jsonify(json.loads(response_text))
     except Exception as e:
         return jsonify({"error": f"Image analysis failed: {str(e)}"}), 500
 
@@ -133,124 +76,46 @@ If a value cannot be determined, use 0. Estimate reasonable values for visible f
 @ai_bp.route("/chat", methods=["POST"])
 @require_auth
 def chat():
-    """
-    Conversational AI interface for meal logging, goal checking, and nutrition queries.
-    """
     data = request.get_json()
     if not data or not data.get("message"):
         return jsonify({"error": "message required"}), 400
 
     user_message = data["message"].strip()
-    if len(user_message) > 2000:
-        return jsonify({"error": "Message too long (max 2000 characters)"}), 400
-
     conn = get_db()
     try:
-        # Get recent chat history (last 10 messages for context)
-        history = conn.execute(
-            """SELECT role, content FROM chat_messages 
-               WHERE user_id=? ORDER BY created_at DESC LIMIT 10""",
+        # History Retrieval
+        rows = conn.execute(
+            "SELECT role, content FROM chat_messages WHERE user_id=? ORDER BY created_at DESC LIMIT 10",
             (g.user_id,)
         ).fetchall()
-        history = list(reversed([dict(h) for h in history]))
+        
+        # Format history for the SDK
+        history_for_sdk = []
+        for h in reversed(rows):
+            role = "model" if h["role"] == "assistant" else "user"
+            history_for_sdk.append(types.Content(role=role, parts=[types.Part.from_text(text=h["content"])]))
 
-        # Get user's current goals and today's intake for context
-        goals = conn.execute("SELECT * FROM goals WHERE user_id=?", (g.user_id,)).fetchone()
+        # Add the current user message
+        history_for_sdk.append(types.Content(role="user", parts=[types.Part.from_text(text=user_message)]))
 
-        from datetime import date
-        today = str(date.today())
-        today_totals = conn.execute("""
-            SELECT SUM(calories) as cal, SUM(protein_g) as pro,
-                   SUM(carbs_g) as carbs, SUM(fat_g) as fat
-            FROM food_entries WHERE user_id=? AND entry_date=?
-        """, (g.user_id, today)).fetchone()
+        system_prompt = f"You are a nutrition assistant for {g.username}. Use JSON blocks for meals: ```json_meal ... ```"
 
-        goals_ctx = dict(goals) if goals else {}
-        totals_ctx = dict(today_totals) if today_totals else {}
+        response_text = call_gemini(history_for_sdk, system_instruction=system_prompt)
 
-        system_prompt = f"""You are a helpful personal nutrition assistant integrated with a calorie tracking app.
-
-Current user context:
-- Today's date: {today}
-- Username: {g.username}
-- Daily goals: calories={goals_ctx.get('daily_calories')}, protein={goals_ctx.get('protein_g')}g, carbs={goals_ctx.get('carbs_g')}g, fat={goals_ctx.get('fat_g')}g
-- Today's intake so far: calories={totals_ctx.get('cal') or 0:.0f}, protein={totals_ctx.get('pro') or 0:.0f}g, carbs={totals_ctx.get('carbs') or 0:.0f}g, fat={totals_ctx.get('fat') or 0:.0f}g
-
-You can help users:
-1. Log meals - when they describe food, provide nutritional estimates
-2. Check their goals and progress
-3. Answer nutrition questions
-4. Summarize their dietary patterns
-5. Give personalized advice based on their goals
-
-When a user wants to log a meal, extract the food details and provide a JSON block they can use:
-```json_meal
-{{"food_name": "...", "meal_type": "breakfast|lunch|dinner|snacks", "quantity": X, "quantity_unit": "g", "calories": X, "protein_g": X, "carbs_g": X, "fat_g": X}}
-```
-
-Be conversational, encouraging, and helpful. Keep responses concise."""
-
-        messages = history + [{"role": "user", "content": user_message}]
-
-        response_text = call_claude(messages, system=system_prompt, max_tokens=600)
-
-        # Save messages to DB
-        conn.execute(
-            "INSERT INTO chat_messages (user_id, role, content) VALUES (?, ?, ?)",
-            (g.user_id, "user", user_message)
-        )
-        conn.execute(
-            "INSERT INTO chat_messages (user_id, role, content) VALUES (?, ?, ?)",
-            (g.user_id, "assistant", response_text)
-        )
+        # Database logging
+        conn.execute("INSERT INTO chat_messages (user_id, role, content) VALUES (?, 'user', ?)", (g.user_id, user_message))
+        conn.execute("INSERT INTO chat_messages (user_id, role, content) VALUES (?, 'assistant', ?)", (g.user_id, response_text))
         conn.commit()
 
-        # Check if response contains meal data to log
+        # Extract meal suggestion if available
         meal_data = None
         if "```json_meal" in response_text:
             try:
-                start = response_text.index("```json_meal") + 12
-                end = response_text.index("```", start)
-                meal_json = response_text[start:end].strip()
+                meal_json = response_text.split("```json_meal")[1].split("```")[0].strip()
                 meal_data = json.loads(meal_json)
-            except Exception:
-                pass
+            except: pass
 
-        return jsonify({
-            "response": response_text,
-            "meal_suggestion": meal_data
-        })
-
-    finally:
-        conn.close()
-
-
-@ai_bp.route("/chat/history", methods=["GET"])
-@require_auth
-def chat_history():
-    """Get paginated chat history."""
-    try:
-        page = max(1, int(request.args.get("page", 1)))
-        per_page = min(50, max(1, int(request.args.get("per_page", 20))))
-    except ValueError:
-        return jsonify({"error": "page and per_page must be integers"}), 400
-
-    offset = (page - 1) * per_page
-    conn = get_db()
-    try:
-        total = conn.execute(
-            "SELECT COUNT(*) FROM chat_messages WHERE user_id=?", (g.user_id,)
-        ).fetchone()[0]
-        rows = conn.execute(
-            """SELECT id, role, content, created_at FROM chat_messages
-               WHERE user_id=? ORDER BY created_at DESC LIMIT ? OFFSET ?""",
-            (g.user_id, per_page, offset)
-        ).fetchall()
-        return jsonify({
-            "items": [dict(r) for r in reversed(rows)],
-            "pagination": {"page": page, "per_page": per_page, "total": total,
-                          "pages": (total + per_page - 1) // per_page}
-        })
+        return jsonify({"response": response_text, "meal_suggestion": meal_data})
     finally:
         conn.close()
 
@@ -258,70 +123,26 @@ def chat_history():
 @ai_bp.route("/parse-pdf", methods=["POST"])
 @require_auth
 def parse_pdf():
-    """
-    Parse a food diary PDF and extract entries for bulk import.
-    Accepts a PDF file upload.
-    """
     if "pdf" not in request.files:
         return jsonify({"error": "pdf file required"}), 400
 
     file = request.files["pdf"]
-    if not file.filename or not file.filename.lower().endswith(".pdf"):
-        return jsonify({"error": "File must be a PDF"}), 400
-
     pdf_data = file.read()
-    if len(pdf_data) > 20 * 1024 * 1024:
-        return jsonify({"error": "PDF too large (max 20MB)"}), 400
 
-    pdf_b64 = base64.b64encode(pdf_data).decode()
-
-    system_prompt = """You are a food diary parser. Extract all food entries from the PDF and return them as JSON only.
-Return this exact structure:
-{
-  "entries": [
-    {
-      "food_name": "string",
-      "meal_type": "breakfast|lunch|dinner|snacks",
-      "quantity": number,
-      "quantity_unit": "string",
-      "entry_date": "YYYY-MM-DD",
-      "calories": number,
-      "protein_g": number,
-      "carbs_g": number,
-      "fat_g": number,
-      "fiber_g": number,
-      "sugar_g": number,
-      "sodium_mg": number
-    }
-  ],
-  "summary": "brief description of what was parsed"
-}
-For missing values use 0. If date is unclear use today's date. Meal type default is "snacks"."""
-
-    messages = [{
-        "role": "user",
-        "content": [
-            {
-                "type": "document",
-                "source": {
-                    "type": "base64",
-                    "media_type": "application/pdf",
-                    "data": pdf_b64
-                }
-            },
-            {"type": "text", "text": "Parse all food diary entries from this PDF into JSON format."}
-        ]
-    }]
+    system_prompt = "Extract food entries from PDF to JSON. Exact structure: { 'entries': [...], 'summary': 'str' }"
+    
+    # SDK handling for PDF
+    contents = [
+        types.Part.from_bytes(data=pdf_data, mime_type="application/pdf"),
+        "Parse all food diary entries from this PDF into JSON format."
+    ]
 
     try:
-        response_text = call_claude(messages, system=system_prompt, max_tokens=4096)
-        response_text = response_text.strip()
-        if response_text.startswith("```"):
-            response_text = response_text.split("\n", 1)[1].rsplit("```", 1)[0]
-
-        parsed = json.loads(response_text)
-        return jsonify(parsed)
-    except json.JSONDecodeError:
-        return jsonify({"error": "Failed to parse PDF content"}), 422
+        response_text = call_gemini(contents, system_instruction=system_prompt)
+        
+        if "```" in response_text:
+            response_text = response_text.split("```")[1].replace("json", "").strip()
+            
+        return jsonify(json.loads(response_text))
     except Exception as e:
         return jsonify({"error": f"PDF parsing failed: {str(e)}"}), 500
