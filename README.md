@@ -1,8 +1,8 @@
-# 🥗 CalTrack — Personal Calorie Tracker
+# CalTrack — Personal Calorie Tracker
 
 A full-stack nutrition tracking application with AI-powered meal analysis, conversational chat interface, multi-user support, and rich data visualizations.
 
-## ✨ Features
+## Features
 
 ### Core Features
 - **Goal Setting** — Set daily calorie, macro, and micronutrient targets with preset templates
@@ -21,7 +21,7 @@ A full-stack nutrition tracking application with AI-powered meal analysis, conve
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 calorie-tracker/
@@ -63,7 +63,7 @@ calorie-tracker/
 
 ---
 
-## 🚀 Setup & Running
+## Setup & Running
 
 ### Prerequisites
 - Python 3.10+ 
@@ -109,7 +109,7 @@ The app will open at `http://localhost:3000`.
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 ### Authentication
 | Method | Endpoint | Description |
@@ -161,11 +161,11 @@ All other endpoints require `Authorization: Bearer <token>` header.
 
 ---
 
-## 🔧 Environment Variables
+## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `ANTHROPIC_API_KEY` | — | **Required for AI features** |
+| `GEMINI_API_KEY` | — | **Required for AI features** |
 | `SECRET_KEY` | `dev-secret-key-change-in-production` | JWT signing key |
 | `DB_PATH` | `calorie_tracker.db` | SQLite database file path |
 | `PORT` | `8000` | Backend server port |
@@ -173,7 +173,7 @@ All other endpoints require `Authorization: Bearer <token>` header.
 
 ---
 
-## 📊 Data Model
+## Data Model
 
 ### `users`
 - `id`, `username`, `email`, `password_hash`, `created_at`
@@ -192,7 +192,7 @@ All other endpoints require `Authorization: Bearer <token>` header.
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 ```bash
 cd backend
@@ -223,7 +223,7 @@ with app.test_client() as c:
 
 ---
 
-## 🔐 Security Notes
+## Security Notes
 
 - All endpoints (except auth) require a valid JWT token
 - User data is fully isolated — queries always filter by `user_id`
@@ -233,7 +233,7 @@ with app.test_client() as c:
 
 ---
 
-## 🌱 Assumptions
+## Assumptions
 
 1. The app is designed for single-server deployment with SQLite; for horizontal scaling, switch to PostgreSQL and use connection pooling.
 2. AI features require a valid `ANTHROPIC_API_KEY`. Without it, image analysis and chat will return error responses, but all other features work normally.
