@@ -88,6 +88,7 @@ function AppInner() {
     switch (activePage) {
       case 'dashboard': return <Dashboard onNavigate={navigate} />;
       case 'log': return <MealLog prefillData={mealPrefill} onPrefillUsed={() => setMealPrefill(null)} />;
+      case 'reports': return <Reports />;
     }
   };
 
