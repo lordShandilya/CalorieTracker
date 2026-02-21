@@ -91,6 +91,8 @@ function AppInner() {
       case 'reports': return <Reports />;
       case 'goals': return <Goals />;
       case 'ai': return <AIScanner onLogMeal={handleLogFromAI} />;
+      case 'chat': return <ChatInterface onLogMeal={handleLogFromAI} />;
+      default: return <Dashboard onNavigate={navigate} />;
     }
   };
 
