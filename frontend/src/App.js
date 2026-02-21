@@ -90,6 +90,7 @@ function AppInner() {
       case 'log': return <MealLog prefillData={mealPrefill} onPrefillUsed={() => setMealPrefill(null)} />;
       case 'reports': return <Reports />;
       case 'goals': return <Goals />;
+      case 'ai': return <AIScanner onLogMeal={handleLogFromAI} />;
     }
   };
 
