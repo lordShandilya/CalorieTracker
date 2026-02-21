@@ -37,7 +37,6 @@ def call_gemini(contents: list, system_instruction: str = "", max_tokens: int = 
         return response.text
 
     except Exception as e:
-        # The SDK handles the HTTP details, so we catch general exceptions here
         raise Exception(f"Gemini SDK Error: {str(e)}")
 
 
