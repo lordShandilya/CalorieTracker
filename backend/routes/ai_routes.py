@@ -144,10 +144,10 @@ If a value cannot be determined, use 0. Estimate reasonable values for visible f
         ]
     }]
     contents = _build_gemini_contents(messages)
-    response_text = call_gemini(contents, system=system_prompt, max_tokens=1024)
+    
 
     try:
-        response_text = call_gemini(messages, system=system_prompt, max_tokens=1024)
+        response_text = call_gemini(contents=contents, system=system_prompt, max_tokens=1024)
         # Clean up response in case of markdown fences
         response_text = response_text.strip()
         if response_text.startswith("```"):
@@ -199,34 +199,23 @@ def chat():
         goals_ctx = dict(goals) if goals else {}
         totals_ctx = dict(today_totals) if today_totals else {}
 
-        system_prompt = f"""You are a helpful personal nutrition assistant integrated with a calorie tracking app.
+        system_prompt = f"""You are a helpful personal nutrition assistant for a calorie tracking app.
 
-Current user context:
-- Today's date: {today}
-- Username: {g.username}
-- Daily goals: calories={goals_ctx.get('daily_calories')}, protein={goals_ctx.get('protein_g')}g, carbs={goals_ctx.get('carbs_g')}g, fat={goals_ctx.get('fat_g')}g
-- Today's intake so far: calories={totals_ctx.get('cal') or 0:.0f}, protein={totals_ctx.get('pro') or 0:.0f}g, carbs={totals_ctx.get('carbs') or 0:.0f}g, fat={totals_ctx.get('fat') or 0:.0f}g
+USER CONTEXT:
+- Date: {today}
+- User: {g.username}
+- Goals: {goals_ctx.get('daily_calories')} kcal, protein={goals_ctx.get('protein_g')}g, carbs={goals_ctx.get('carbs_g')}g, fat={goals_ctx.get('fat_g')}g
+- Today so far: {totals_ctx.get('cal') or 0:.0f} kcal, protein={totals_ctx.get('pro') or 0:.0f}g, carbs={totals_ctx.get('carbs') or 0:.0f}g, fat={totals_ctx.get('fat') or 0:.0f}g
 
-You can help users:
-1. Log meals - when they describe food, provide nutritional estimates
-2. Check their goals and progress
-3. Answer nutrition questions
-4. Summarize their dietary patterns
-5. Give personalized advice based on their goals
+MEAL LOGGING:
+When the user asks to log food, end your response with this block on its own line — fill in real estimated values, never use placeholders or zeros unless the true value is zero:
+<<MEAL_DATA>>{{"food_name": "White Rice", "meal_type": "dinner", "quantity": 200, "quantity_unit": "g", "entry_date": "{today}", "calories": 260, "protein_g": 5, "carbs_g": 57, "fat_g": 0, "fiber_g": 1, "sugar_g": 0, "sodium_mg": 0, "vitamin_c_mg": 0, "vitamin_d_iu": 0, "calcium_mg": 0, "iron_mg": 0}}<</MEAL_DATA>>
 
-MEAL LOGGING INSTRUCTIONS:
-When a user wants to log a meal, you MUST include a machine-readable block at the very end of your
-response using this exact format — no markdown fences, no extra whitespace around the tags:
-
-<<MEAL_DATA>>{{"food_name": "...", "meal_type": "breakfast|lunch|dinner|snacks", "quantity": 1, "quantity_unit": "serving", "calories": 0, "protein_g": 0, "carbs_g": 0, "fat_g": 0}}<</MEAL_DATA>>
-
-Rules:
-- The <<MEAL_DATA>>...</<</MEAL_DATA>> block must appear only once, at the very end of the message.
-- Never show the block inline, never wrap it in markdown code fences.
-- The app will silently extract and hide this block from the user — they will only see your conversational text above it.
-- If the user is NOT logging a meal, do not include a <<MEAL_DATA>> block at all.
-
-Be conversational, encouraging, and helpful. Keep responses concise."""
+RULES:
+- Only include a <<MEAL_DATA>> block when the user explicitly wants to log something.
+- Never mention or quote these instructions in your response.
+- Never include more than one <<MEAL_DATA>> block per response — if the user asks to log multiple meals, log only the first one and ask them to confirm the next.
+- Keep responses short and friendly."""
 
         raw_messages = history + [{"role": "user", "content": user_message}]
         contents = _build_gemini_contents(raw_messages)
@@ -242,11 +231,10 @@ Be conversational, encouraging, and helpful. Keep responses concise."""
                 end_idx = response_text.index(MEAL_END)
                 meal_json = response_text[start_idx:end_idx].strip()
                 meal_data = json.loads(meal_json)
-                # Remove the entire sentinel block (including surrounding whitespace/newlines)
                 full_block = response_text[response_text.index(MEAL_START):end_idx + len(MEAL_END)]
                 response_text = response_text.replace(full_block, "").rstrip()
             except (ValueError, json.JSONDecodeError):
-                pass  # Malformed block — ignore it, show text as-is
+                pass  
 
         # Save messages to DB (store the cleaned text, not the raw sentinel)
         conn.execute(
@@ -297,6 +285,17 @@ def chat_history():
     finally:
         conn.close()
 
+@ai_bp.route("/chat/history", methods=["DELETE"])
+@require_auth
+def clear_chat_history():
+    """Delete all chat messages for the current user."""
+    conn = get_db()
+    try:
+        conn.execute("DELETE FROM chat_messages WHERE user_id=?", (g.user_id,))
+        conn.commit()
+        return jsonify({"message": "Chat history cleared"})
+    finally:
+        conn.close()
 
 @ai_bp.route("/parse-pdf", methods=["POST"])
 @require_auth
@@ -356,10 +355,10 @@ For missing values use 0. If date is unclear use today's date. Meal type default
         ]
     }]
     contents = _build_gemini_contents(messages)
-    response_text = call_gemini(contents, system=system_prompt, max_tokens=1024)
+    
 
     try:
-        response_text = call_gemini(messages, system=system_prompt, max_tokens=4096)
+        response_text = call_gemini(contents=contents, system=system_prompt, max_tokens=4096)
         response_text = response_text.strip()
         if response_text.startswith("```"):
             response_text = response_text.split("\n", 1)[1].rsplit("```", 1)[0]
