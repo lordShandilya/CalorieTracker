@@ -51,7 +51,7 @@ export default function ChatInterface({ onLogMeal }) {
         }]);
       }
     } catch (e) {
-      setError(e.message || 'Chat failed. Make sure ANTHROPIC_API_KEY is set.');
+      setError(e.message || 'Chat failed. Make sure API_KEY is set.');
       setMessages(m => m.filter(msg => msg !== userMsg));
     } finally {
       setLoading(false);
