@@ -16,7 +16,9 @@ from routes.goals_routes import goals_bp
 from routes.entries_routes import entries_bp
 from routes.reports_routes import reports_bp
 from routes.ai_routes import ai_bp
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def create_app() -> Flask:
     """Application factory."""

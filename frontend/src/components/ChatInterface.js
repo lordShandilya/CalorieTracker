@@ -58,6 +58,16 @@ export default function ChatInterface({ onLogMeal }) {
     }
   };
 
+  const handleClearHistory = async () => {
+  if (!window.confirm('Clear all chat history? This cannot be undone.')) return;
+  try {
+    await api.clearChatHistory();
+    setMessages([]);
+  } catch (e) {
+    setError('Failed to clear history');
+  }
+};
+
   const QUICK_PROMPTS = [
     "What did I eat today?",
     "How many calories do I have left today?",
@@ -69,11 +79,18 @@ export default function ChatInterface({ onLogMeal }) {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', height: 'calc(100vh - 160px)', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>💬 AI Nutrition Assistant</h1>
-        <p style={{ color: '#6b7280', margin: '4px 0 0', fontSize: 14 }}>
-          Ask about your nutrition, log meals, or get personalized advice
-        </p>
+      <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>AI Nutrition Assistant</h1>
+          <p style={{ color: '#6b7280', margin: '4px 0 0', fontSize: 14 }}>
+            Ask about your nutrition, log meals, or get personalized advice
+          </p>
+        </div>
+        {messages.length > 0 && (
+        <Button variant="ghost" size="sm" onClick={handleClearHistory} style={{ color: '#ef4444', borderColor: '#fecaca' }}>
+          Clear History
+        </Button>
+        )}
       </div>
 
       <ErrorBanner message={error} onDismiss={() => setError('')} />

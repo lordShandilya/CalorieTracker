@@ -74,13 +74,13 @@ export default function Reports() {
   ] : [];
 
   const tabs = ['trends', 'macros', 'goals', 'micros'];
-  const tabLabels = { trends: '📈 Trends', macros: '🥜 Macros', goals: '🎯 Goals', micros: '💊 Micros' };
+  const tabLabels = { trends: 'Trends', macros: 'Macros', goals: 'Goals', micros: 'Micros' };
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>📊 Nutrition Reports</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Nutrition Reports</h1>
           <p style={{ color: '#6b7280', margin: '4px 0 0', fontSize: 14 }}>Visualize your dietary patterns and trends</p>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>

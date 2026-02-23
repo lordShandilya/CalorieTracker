@@ -28,7 +28,6 @@ function Layout({ children, activePage, onNavigate }) {
       }}>
         <div style={{ padding: '0 20px 24px', borderBottom: '1px solid #f1f5f9' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 28 }}>🥗</span>
             <div>
               <div style={{ fontWeight: 800, fontSize: 16, color: '#111827' }}>CalTrack</div>
               <div style={{ fontSize: 11, color: '#9ca3af' }}>Nutrition Tracker</div>
@@ -45,7 +44,6 @@ function Layout({ children, activePage, onNavigate }) {
               color: activePage === item.id ? '#6366f1' : '#374151',
               textAlign: 'left', transition: 'all 0.15s'
             }}>
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
               {item.label}
             </button>
           ))}

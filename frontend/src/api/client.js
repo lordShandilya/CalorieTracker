@@ -81,6 +81,7 @@ export const api = {
     const qs = new URLSearchParams(params || {}).toString();
     return request('GET', `/ai/chat/history${qs ? '?' + qs : ''}`);
   },
+  clearChatHistory: () => request('DELETE', '/ai/chat/history'),
   parsePdf: (formData) => request('POST', '/ai/parse-pdf', formData, true),
 };
 

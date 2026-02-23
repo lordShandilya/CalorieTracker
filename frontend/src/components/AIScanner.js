@@ -85,7 +85,7 @@ export default function AIScanner({ onLogMeal }) {
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>🤖 AI Food Scanner</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>AI Food Scanner</h1>
         <p style={{ color: '#6b7280', margin: '4px 0 0', fontSize: 14 }}>
           Upload a food photo or nutrition label to auto-extract nutritional info
         </p>

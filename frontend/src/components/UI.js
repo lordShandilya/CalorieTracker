@@ -3,17 +3,26 @@ import React, { useState } from 'react';
 /** Simple spinner */
 export function Spinner({ size = 24 }) {
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{
-        width: size, height: size,
-        border: '2px solid #e5e7eb',
-        borderTopColor: '#6366f1',
-        borderRadius: '50%',
-        animation: 'spin 0.7s linear infinite'
-      }} />
-    </div>
+    <>
+      <style>{`
+        @keyframes _spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+      <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          width: size,
+          height: size,
+          border: '2px solid #e5e7eb',
+          borderTopColor: '#6366f1',
+          borderRadius: '50%',
+          animation: '_spin 0.7s linear infinite'
+        }} />
+      </div>
+    </>
   );
 }
+
 
 /** Error banner */
 export function ErrorBanner({ message, onDismiss }) {

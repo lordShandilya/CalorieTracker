@@ -9,9 +9,8 @@ from google.genai import types
 
 ai_bp = Blueprint("ai", __name__, url_prefix="/api/ai")
 
-# Initialize the Gemini Client
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-client = genai.Client(api_key=GEMINI_API_KEY)
+
+
 
 def _build_gemini_contents(messages: list) -> list:
     """
@@ -52,7 +51,11 @@ def _build_gemini_contents(messages: list) -> list:
 
 def call_gemini(contents: list, system: str = "", max_tokens: int = 2048) -> str:
     """Call Gemini API using the official google-genai SDK."""
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+    if not GEMINI_API_KEY:
+        raise Exception("GEMINI_API_KEY is not set. Check env variables.")
     model_id = "gemini-3-flash-preview"
+    client = genai.Client(api_key=GEMINI_API_KEY)
     
     try:
         # Configuration including system instructions and token limits
@@ -219,7 +222,7 @@ RULES:
 
         raw_messages = history + [{"role": "user", "content": user_message}]
         contents = _build_gemini_contents(raw_messages)
-        response_text = call_gemini(contents, system=system_prompt, max_tokens=600)
+        response_text = call_gemini(contents, system=system_prompt, max_tokens=1024)
 
         # Extract structured meal data from the sentinel tags and strip from visible text
         meal_data = None
@@ -234,7 +237,10 @@ RULES:
                 full_block = response_text[response_text.index(MEAL_START):end_idx + len(MEAL_END)]
                 response_text = response_text.replace(full_block, "").rstrip()
             except (ValueError, json.JSONDecodeError):
-                pass  
+                # JSON was truncated — strip whatever partial block leaked into the text
+                if MEAL_START in response_text:
+                    response_text = response_text[:response_text.index(MEAL_START)].rstrip()
+                meal_data = None
 
         # Save messages to DB (store the cleaned text, not the raw sentinel)
         conn.execute(

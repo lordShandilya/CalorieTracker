@@ -113,7 +113,7 @@ export default function Goals() {
 
         {/* Micro goals */}
         <Card style={{ marginBottom: 20 }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 700 }}>💊 Micronutrient Goals</h3>
+          <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 700 }}>Micronutrient Goals</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             <Field label="Fiber (g/day)">
               <Input type="number" value={form.fiber_g || ''} onChange={setF('fiber_g')} placeholder="e.g. 25" min="0" />
@@ -129,7 +129,7 @@ export default function Goals() {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button type="submit" disabled={saving}>
-            {saving ? 'Saving...' : '💾 Save Goals'}
+            {saving ? 'Saving...' : 'Save Goals'}
           </Button>
         </div>
       </form>

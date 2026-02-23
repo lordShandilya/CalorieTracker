@@ -134,7 +134,7 @@ export default function MealLog({ prefillData, onPrefillUsed }) {
     <div style={{ maxWidth: 900, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>🍽️ Meal Log</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Meal Log</h1>
           <p style={{ color: '#6b7280', margin: '4px 0 0', fontSize: 14 }}>Track your daily food intake</p>
         </div>
         <Button onClick={openCreate}>➕ Log Meal</Button>
