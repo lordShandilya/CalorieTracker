@@ -1,0 +1,300 @@
+<svg viewBox="0 0 1000 680" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1117"/>
+      <stop offset="100%" style="stop-color:#1a1d27"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#818cf8"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d97706"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1d4ed8"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#be123c"/>
+      <stop offset="100%" style="stop-color:#f43f5e"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4b5563"/>
+    </marker>
+    <marker id="arrowAccent" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="680" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Subtle grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="0.3" opacity="0.04"/>
+  </pattern>
+  <rect width="1000" height="680" fill="url(#grid)" rx="12"/>
+
+  <!-- Title -->
+  <text x="500" y="40" text-anchor="middle" font-size="20" font-weight="700" fill="#f1f5f9" letter-spacing="1">CalTrack — System Architecture</text>
+  <line x1="350" y1="50" x2="650" y2="50" stroke="#6366f1" stroke-width="1" opacity="0.6"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- LAYER LABELS -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <text x="24" y="155" font-size="10" fill="#4b5563" font-weight="600" letter-spacing="2" transform="rotate(-90, 24, 155)">CLIENT</text>
+  <text x="24" y="360" font-size="10" fill="#4b5563" font-weight="600" letter-spacing="2" transform="rotate(-90, 24, 360)">SERVER</text>
+  <text x="24" y="565" font-size="10" fill="#4b5563" font-weight="600" letter-spacing="2" transform="rotate(-90, 24, 565)">DATA / AI</text>
+
+  <!-- Layer dividers -->
+  <line x1="48" y1="250" x2="952" y2="250" stroke="#2e3350" stroke-width="1" stroke-dasharray="4,6"/>
+  <line x1="48" y1="460" x2="952" y2="460" stroke="#2e3350" stroke-width="1" stroke-dasharray="4,6"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- FRONTEND LAYER -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <!-- React App container -->
+  <rect x="60" y="70" width="880" height="165" rx="10" fill="#1a1d27" stroke="#2e3350" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="60" y="70" width="880" height="4" rx="2" fill="url(#accentGrad)"/>
+  <text x="80" y="92" font-size="11" font-weight="700" fill="#6366f1" letter-spacing="1">REACT FRONTEND  ·  localhost:3000</text>
+
+  <!-- Frontend components -->
+  <!-- Dashboard -->
+  <rect x="80" y="103" width="120" height="110" rx="8" fill="#22263a" stroke="#3730a3" stroke-width="1"/>
+  <rect x="80" y="103" width="120" height="3" rx="2" fill="url(#accentGrad)"/>
+  <text x="140" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#818cf8">Dashboard</text>
+  <text x="140" y="140" text-anchor="middle" font-size="9" fill="#64748b">Today's stats</text>
+  <text x="140" y="153" text-anchor="middle" font-size="9" fill="#64748b">Calorie summary</text>
+  <text x="140" y="166" text-anchor="middle" font-size="9" fill="#64748b">Weekly chart</text>
+  <text x="140" y="179" text-anchor="middle" font-size="9" fill="#64748b">Macro breakdown</text>
+
+  <!-- Meal Log -->
+  <rect x="215" y="103" width="120" height="110" rx="8" fill="#22263a" stroke="#3730a3" stroke-width="1"/>
+  <rect x="215" y="103" width="120" height="3" rx="2" fill="url(#accentGrad)"/>
+  <text x="275" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#818cf8">Meal Log</text>
+  <text x="275" y="140" text-anchor="middle" font-size="9" fill="#64748b">Log / edit entries</text>
+  <text x="275" y="153" text-anchor="middle" font-size="9" fill="#64748b">Filter by date</text>
+  <text x="275" y="166" text-anchor="middle" font-size="9" fill="#64748b">Filter by meal type</text>
+  <text x="275" y="179" text-anchor="middle" font-size="9" fill="#64748b">Pagination</text>
+
+  <!-- Reports -->
+  <rect x="350" y="103" width="120" height="110" rx="8" fill="#22263a" stroke="#3730a3" stroke-width="1"/>
+  <rect x="350" y="103" width="120" height="3" rx="2" fill="url(#accentGrad)"/>
+  <text x="410" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#818cf8">Reports</text>
+  <text x="410" y="140" text-anchor="middle" font-size="9" fill="#64748b">Trends chart</text>
+  <text x="410" y="153" text-anchor="middle" font-size="9" fill="#64748b">Macro pie chart</text>
+  <text x="410" y="166" text-anchor="middle" font-size="9" fill="#64748b">Goal comparison</text>
+  <text x="410" y="179" text-anchor="middle" font-size="9" fill="#64748b">Micronutrient radar</text>
+
+  <!-- Goals -->
+  <rect x="485" y="103" width="120" height="110" rx="8" fill="#22263a" stroke="#3730a3" stroke-width="1"/>
+  <rect x="485" y="103" width="120" height="3" rx="2" fill="url(#accentGrad)"/>
+  <text x="545" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#818cf8">Goals</text>
+  <text x="545" y="140" text-anchor="middle" font-size="9" fill="#64748b">Calorie targets</text>
+  <text x="545" y="153" text-anchor="middle" font-size="9" fill="#64748b">Macro targets</text>
+  <text x="545" y="166" text-anchor="middle" font-size="9" fill="#64748b">Micro targets</text>
+  <text x="545" y="179" text-anchor="middle" font-size="9" fill="#64748b">Goal presets</text>
+
+  <!-- AI Scanner -->
+  <rect x="620" y="103" width="120" height="110" rx="8" fill="#22263a" stroke="#3730a3" stroke-width="1"/>
+  <rect x="620" y="103" width="120" height="3" rx="2" fill="url(#accentGrad)"/>
+  <text x="680" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#818cf8">AI Scanner</text>
+  <text x="680" y="140" text-anchor="middle" font-size="9" fill="#64748b">Image upload</text>
+  <text x="680" y="153" text-anchor="middle" font-size="9" fill="#64748b">PDF import</text>
+  <text x="680" y="166" text-anchor="middle" font-size="9" fill="#64748b">Drag and drop</text>
+  <text x="680" y="179" text-anchor="middle" font-size="9" fill="#64748b">Label extraction</text>
+
+  <!-- AI Chat -->
+  <rect x="755" y="103" width="170" height="110" rx="8" fill="#22263a" stroke="#3730a3" stroke-width="1"/>
+  <rect x="755" y="103" width="170" height="3" rx="2" fill="url(#accentGrad)"/>
+  <text x="840" y="123" text-anchor="middle" font-size="10" font-weight="700" fill="#818cf8">AI Chat</text>
+  <text x="840" y="140" text-anchor="middle" font-size="9" fill="#64748b">Natural language logging</text>
+  <text x="840" y="153" text-anchor="middle" font-size="9" fill="#64748b">Nutrition Q&amp;A</text>
+  <text x="840" y="166" text-anchor="middle" font-size="9" fill="#64748b">Chat history</text>
+  <text x="840" y="179" text-anchor="middle" font-size="9" fill="#64748b">Meal suggestion cards</text>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ARROWS: Frontend → Backend  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <line x1="500" y1="235" x2="500" y2="268" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowAccent)" opacity="0.7"/>
+  <text x="510" y="256" font-size="9" fill="#6366f1" opacity="0.8">REST API / JSON</text>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- BACKEND LAYER -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <!-- Flask app container -->
+  <rect x="60" y="270" width="880" height="175" rx="10" fill="#1a1d27" stroke="#2e3350" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="60" y="270" width="880" height="4" rx="2" fill="url(#greenGrad)"/>
+  <text x="80" y="292" font-size="11" font-weight="700" fill="#10b981" letter-spacing="1">FLASK BACKEND  ·  localhost:8000  ·  Gunicorn (production)</text>
+
+  <!-- Auth middleware badge -->
+  <rect x="700" y="282" width="220" height="22" rx="4" fill="#14532d" stroke="#16a34a" stroke-width="1"/>
+  <text x="810" y="297" text-anchor="middle" font-size="9" fill="#86efac" font-weight="600">JWT Auth Middleware  ·  All routes protected</text>
+
+  <!-- Route boxes -->
+  <!-- Auth routes -->
+  <rect x="80" y="305" width="130" height="120" rx="8" fill="#22263a" stroke="#065f46" stroke-width="1"/>
+  <rect x="80" y="305" width="130" height="3" rx="2" fill="url(#greenGrad)"/>
+  <text x="145" y="323" text-anchor="middle" font-size="10" font-weight="700" fill="#34d399">Auth Routes</text>
+  <text x="145" y="340" text-anchor="middle" font-size="9" fill="#64748b">POST /auth/signup</text>
+  <text x="145" y="354" text-anchor="middle" font-size="9" fill="#64748b">POST /auth/login</text>
+  <text x="145" y="368" text-anchor="middle" font-size="9" fill="#64748b">SHA-256 passwords</text>
+  <text x="145" y="382" text-anchor="middle" font-size="9" fill="#64748b">JWT token (7d)</text>
+
+  <!-- Entry routes -->
+  <rect x="225" y="305" width="145" height="120" rx="8" fill="#22263a" stroke="#065f46" stroke-width="1"/>
+  <rect x="225" y="305" width="145" height="3" rx="2" fill="url(#greenGrad)"/>
+  <text x="297" y="323" text-anchor="middle" font-size="10" font-weight="700" fill="#34d399">Entry Routes</text>
+  <text x="297" y="340" text-anchor="middle" font-size="9" fill="#64748b">GET/POST /entries</text>
+  <text x="297" y="354" text-anchor="middle" font-size="9" fill="#64748b">PUT/DELETE /entries/:id</text>
+  <text x="297" y="368" text-anchor="middle" font-size="9" fill="#64748b">POST /entries/bulk</text>
+  <text x="297" y="382" text-anchor="middle" font-size="9" fill="#64748b">Pagination + filters</text>
+
+  <!-- Report routes -->
+  <rect x="385" y="305" width="145" height="120" rx="8" fill="#22263a" stroke="#065f46" stroke-width="1"/>
+  <rect x="385" y="305" width="145" height="3" rx="2" fill="url(#greenGrad)"/>
+  <text x="457" y="323" text-anchor="middle" font-size="10" font-weight="700" fill="#34d399">Report Routes</text>
+  <text x="457" y="340" text-anchor="middle" font-size="9" fill="#64748b">GET /reports/daily</text>
+  <text x="457" y="354" text-anchor="middle" font-size="9" fill="#64748b">GET /reports/weekly</text>
+  <text x="457" y="368" text-anchor="middle" font-size="9" fill="#64748b">GET /reports/goal-comparison</text>
+  <text x="457" y="382" text-anchor="middle" font-size="9" fill="#64748b">GET /reports/micronutrients</text>
+
+  <!-- Goals routes -->
+  <rect x="545" y="305" width="130" height="120" rx="8" fill="#22263a" stroke="#065f46" stroke-width="1"/>
+  <rect x="545" y="305" width="130" height="3" rx="2" fill="url(#greenGrad)"/>
+  <text x="610" y="323" text-anchor="middle" font-size="10" font-weight="700" fill="#34d399">Goal Routes</text>
+  <text x="610" y="340" text-anchor="middle" font-size="9" fill="#64748b">GET /goals</text>
+  <text x="610" y="354" text-anchor="middle" font-size="9" fill="#64748b">PUT /goals</text>
+  <text x="610" y="368" text-anchor="middle" font-size="9" fill="#64748b">User-scoped</text>
+  <text x="610" y="382" text-anchor="middle" font-size="9" fill="#64748b">Input validation</text>
+
+  <!-- AI routes -->
+  <rect x="690" y="305" width="230" height="120" rx="8" fill="#22263a" stroke="#065f46" stroke-width="1"/>
+  <rect x="690" y="305" width="230" height="3" rx="2" fill="url(#greenGrad)"/>
+  <text x="805" y="323" text-anchor="middle" font-size="10" font-weight="700" fill="#34d399">AI Routes</text>
+  <text x="805" y="340" text-anchor="middle" font-size="9" fill="#64748b">POST /ai/analyze-image</text>
+  <text x="805" y="354" text-anchor="middle" font-size="9" fill="#64748b">POST /ai/chat</text>
+  <text x="805" y="368" text-anchor="middle" font-size="9" fill="#64748b">GET/DELETE /ai/chat/history</text>
+  <text x="805" y="382" text-anchor="middle" font-size="9" fill="#64748b">POST /ai/parse-pdf</text>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ARROWS: Backend → Data / AI layer -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- To SQLite -->
+  <line x1="340" y1="445" x2="280" y2="478" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowGreen)" opacity="0.7"/>
+  <!-- To Gemini -->
+  <line x1="750" y1="445" x2="750" y2="478" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)" opacity="0.7"/>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- DATA / AI LAYER -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <!-- SQLite -->
+  <rect x="60" y="478" width="420" height="170" rx="10" fill="#1a1d27" stroke="#2e3350" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="60" y="478" width="420" height="4" rx="2" fill="url(#blueGrad)"/>
+  <text x="80" y="500" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">SQLITE DATABASE</text>
+
+  <!-- Tables -->
+  <rect x="80" y="510" width="90" height="118" rx="6" fill="#22263a" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="80" y="510" width="90" height="22" rx="6" fill="#1d4ed8" opacity="0.4"/>
+  <text x="125" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#93c5fd">users</text>
+  <text x="125" y="544" text-anchor="middle" font-size="8" fill="#64748b">id</text>
+  <text x="125" y="557" text-anchor="middle" font-size="8" fill="#64748b">username</text>
+  <text x="125" y="570" text-anchor="middle" font-size="8" fill="#64748b">email</text>
+  <text x="125" y="583" text-anchor="middle" font-size="8" fill="#64748b">password_hash</text>
+  <text x="125" y="596" text-anchor="middle" font-size="8" fill="#64748b">created_at</text>
+
+  <rect x="185" y="510" width="90" height="118" rx="6" fill="#22263a" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="185" y="510" width="90" height="22" rx="6" fill="#1d4ed8" opacity="0.4"/>
+  <text x="230" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#93c5fd">goals</text>
+  <text x="230" y="544" text-anchor="middle" font-size="8" fill="#64748b">user_id (FK)</text>
+  <text x="230" y="557" text-anchor="middle" font-size="8" fill="#64748b">daily_calories</text>
+  <text x="230" y="570" text-anchor="middle" font-size="8" fill="#64748b">protein_g</text>
+  <text x="230" y="583" text-anchor="middle" font-size="8" fill="#64748b">carbs_g / fat_g</text>
+  <text x="230" y="596" text-anchor="middle" font-size="8" fill="#64748b">+ micros</text>
+
+  <rect x="290" y="510" width="90" height="118" rx="6" fill="#22263a" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="290" y="510" width="90" height="22" rx="6" fill="#1d4ed8" opacity="0.4"/>
+  <text x="335" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#93c5fd">food_entries</text>
+  <text x="335" y="544" text-anchor="middle" font-size="8" fill="#64748b">user_id (FK)</text>
+  <text x="335" y="557" text-anchor="middle" font-size="8" fill="#64748b">food_name</text>
+  <text x="335" y="570" text-anchor="middle" font-size="8" fill="#64748b">meal_type / date</text>
+  <text x="335" y="583" text-anchor="middle" font-size="8" fill="#64748b">calories + macros</text>
+  <text x="335" y="596" text-anchor="middle" font-size="8" fill="#64748b">+ micronutrients</text>
+
+  <rect x="395" y="510" width="75" height="118" rx="6" fill="#22263a" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="395" y="510" width="75" height="22" rx="6" fill="#1d4ed8" opacity="0.4"/>
+  <text x="432" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#93c5fd">chat_msgs</text>
+  <text x="432" y="544" text-anchor="middle" font-size="8" fill="#64748b">user_id (FK)</text>
+  <text x="432" y="557" text-anchor="middle" font-size="8" fill="#64748b">role</text>
+  <text x="432" y="570" text-anchor="middle" font-size="8" fill="#64748b">content</text>
+  <text x="432" y="583" text-anchor="middle" font-size="8" fill="#64748b">created_at</text>
+
+  <!-- Gemini API -->
+  <rect x="510" y="478" width="430" height="170" rx="10" fill="#1a1d27" stroke="#2e3350" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="510" y="478" width="430" height="4" rx="2" fill="url(#amberGrad)"/>
+  <text x="530" y="500" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="1">GOOGLE GEMINI API  ·  External</text>
+
+  <!-- Gemini capabilities -->
+  <rect x="530" y="510" width="120" height="118" rx="6" fill="#22263a" stroke="#92400e" stroke-width="1"/>
+  <rect x="530" y="510" width="120" height="22" rx="6" fill="#92400e" opacity="0.5"/>
+  <text x="590" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#fbbf24">Image Analysis</text>
+  <text x="590" y="544" text-anchor="middle" font-size="8" fill="#64748b">Food photos</text>
+  <text x="590" y="557" text-anchor="middle" font-size="8" fill="#64748b">Nutrition labels</text>
+  <text x="590" y="570" text-anchor="middle" font-size="8" fill="#64748b">JSON extraction</text>
+  <text x="590" y="583" text-anchor="middle" font-size="8" fill="#64748b">Partial label handling</text>
+  <text x="590" y="596" text-anchor="middle" font-size="8" fill="#64748b">gemini-2.0-flash</text>
+
+  <rect x="665" y="510" width="120" height="118" rx="6" fill="#22263a" stroke="#92400e" stroke-width="1"/>
+  <rect x="665" y="510" width="120" height="22" rx="6" fill="#92400e" opacity="0.5"/>
+  <text x="725" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#fbbf24">Chat Assistant</text>
+  <text x="725" y="544" text-anchor="middle" font-size="8" fill="#64748b">Meal logging via NL</text>
+  <text x="725" y="557" text-anchor="middle" font-size="8" fill="#64748b">Goal tracking Q&amp;A</text>
+  <text x="725" y="570" text-anchor="middle" font-size="8" fill="#64748b">Conversation history</text>
+  <text x="725" y="583" text-anchor="middle" font-size="8" fill="#64748b">MEAL_DATA sentinel</text>
+  <text x="725" y="596" text-anchor="middle" font-size="8" fill="#64748b">gemini-2.0-flash</text>
+
+  <rect x="800" y="510" width="120" height="118" rx="6" fill="#22263a" stroke="#92400e" stroke-width="1"/>
+  <rect x="800" y="510" width="120" height="22" rx="6" fill="#92400e" opacity="0.5"/>
+  <text x="860" y="525" text-anchor="middle" font-size="9" font-weight="700" fill="#fbbf24">PDF Parser</text>
+  <text x="860" y="544" text-anchor="middle" font-size="8" fill="#64748b">Food diary import</text>
+  <text x="860" y="557" text-anchor="middle" font-size="8" fill="#64748b">Bulk entry extraction</text>
+  <text x="860" y="570" text-anchor="middle" font-size="8" fill="#64748b">Date inference</text>
+  <text x="860" y="583" text-anchor="middle" font-size="8" fill="#64748b">Meal type detection</text>
+  <text x="860" y="596" text-anchor="middle" font-size="8" fill="#64748b">gemini-2.0-flash</text>
+
+  <!-- Legend -->
+  <rect x="64" y="655" width="870" height="18" rx="4" fill="#22263a" opacity="0.6"/>
+  <rect x="80" y="660" width="10" height="8" rx="1" fill="url(#accentGrad)"/>
+  <text x="95" y="669" font-size="9" fill="#94a3b8">React Frontend</text>
+  <rect x="185" y="660" width="10" height="8" rx="1" fill="url(#greenGrad)"/>
+  <text x="200" y="669" font-size="9" fill="#94a3b8">Flask Backend</text>
+  <rect x="295" y="660" width="10" height="8" rx="1" fill="url(#blueGrad)"/>
+  <text x="310" y="669" font-size="9" fill="#94a3b8">SQLite Database</text>
+  <rect x="415" y="660" width="10" height="8" rx="1" fill="url(#amberGrad)"/>
+  <text x="430" y="669" font-size="9" fill="#94a3b8">Gemini AI (External)</text>
+  <line x1="560" y1="664" x2="580" y2="664" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="585" y="669" font-size="9" fill="#94a3b8">REST / JSON</text>
+  <line x1="660" y1="664" x2="680" y2="664" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="685" y="669" font-size="9" fill="#94a3b8">DB queries</text>
+  <line x1="755" y1="664" x2="775" y2="664" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="780" y="669" font-size="9" fill="#94a3b8">API calls (HTTPS)</text>
+</svg>

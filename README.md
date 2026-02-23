@@ -21,37 +21,9 @@ A full-stack nutrition tracking application with AI-powered meal analysis, conve
 
 ---
 
-## Architecture
+## System Architecture
 
-```
-calorie-tracker/
-├── backend/              # Flask REST API
-│   ├── app.py            # Application factory & entry point
-│   ├── database.py       # SQLite initialization & connection
-│   ├── auth.py           # Password hashing & JWT utilities
-│   ├── requirements.txt
-│   └── routes/
-│       ├── auth_routes.py    # POST /api/auth/signup, /login
-│       ├── goals_routes.py   # GET/PUT /api/goals
-│       ├── entries_routes.py # CRUD /api/entries + bulk import
-│       ├── reports_routes.py # GET /api/reports/*
-│       └── ai_routes.py      # POST /api/ai/analyze-image, /chat, /parse-pdf
-│
-└── frontend/             # React SPA
-    └── src/
-        ├── App.js              # Root + navigation
-        ├── api/client.js       # Centralized API client
-        ├── utils/AuthContext.js # Authentication state
-        └── components/
-            ├── UI.js           # Reusable component library
-            ├── AuthPage.js     # Login / Sign up
-            ├── Dashboard.js    # Today's summary + charts
-            ├── MealLog.js      # CRUD meal entries
-            ├── Reports.js      # Analytics & graphs
-            ├── Goals.js        # Goal management
-            ├── AIScanner.js    # Image/PDF upload & analysis
-            └── ChatInterface.js # Conversational AI
-```
+![CalTrack System Architecture](system-diagram.svg)
 
 ### Design Decisions
 - **SQLite** — Zero-config, file-based DB perfect for single-server deployments. Schema managed in `database.py` with raw SQL for clarity and control.
