@@ -68,7 +68,7 @@ calorie-tracker/
 ### Prerequisites
 - Python 3.10+ 
 - Node.js 18+
-- An Anthropic API key (for AI features)
+- An Gemini API key (for AI features)
 
 ### Backend
 
@@ -79,7 +79,7 @@ cd backend
 pip install -r requirements.txt
 
 # Set environment variables
-export ANTHROPIC_API_KEY=your_key_here      # Required for AI features
+export GEMINI_API_KEY=your_key_here      # Required for AI features
 export SECRET_KEY=your-secret-key           # JWT signing key (change in production!)
 export DB_PATH=calorie_tracker.db           # SQLite file path (default)
 export PORT=8000                            # Server port (default: 8000)
@@ -236,7 +236,7 @@ with app.test_client() as c:
 ## Assumptions
 
 1. The app is designed for single-server deployment with SQLite; for horizontal scaling, switch to PostgreSQL and use connection pooling.
-2. AI features require a valid `ANTHROPIC_API_KEY`. Without it, image analysis and chat will return error responses, but all other features work normally.
+2. AI features require a valid `GEMINI_API_KEY`. Without it, image analysis and chat will return error responses, but all other features work normally.
 3. A single user-facing origin (`http://localhost:3000`) is allowed for CORS. Update `app.py` for production domains.
 4. Nutritional values entered manually are trusted as-is; AI-extracted values carry a confidence indicator.
 5. The frontend is a single-page React app without a build step for development (uses CRA dev server).
