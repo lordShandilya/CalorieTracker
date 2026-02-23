@@ -6,9 +6,10 @@ from database import get_db
 from auth import require_auth
 from google import genai
 from google.genai import types
+import logging
 
 ai_bp = Blueprint("ai", __name__, url_prefix="/api/ai")
-
+logging.basicConfig(level=logging.DEBUG)
 
 
 
@@ -89,45 +90,29 @@ def analyze_image():
     """
     if "image" not in request.files:
         return jsonify({"error": "image file required"}), 400
-
     file = request.files["image"]
     if not file.filename:
         return jsonify({"error": "No file selected"}), 400
-
     allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
     content_type = file.content_type or "image/jpeg"
     if content_type not in allowed_types:
         return jsonify({"error": "Image must be JPEG, PNG, GIF, or WebP"}), 400
-
-    # Read and encode image
     image_data = file.read()
-    if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
+    if len(image_data) > 10 * 1024 * 1024:
         return jsonify({"error": "Image too large (max 10MB)"}), 400
-
     image_b64 = base64.b64encode(image_data).decode()
 
-    system_prompt = """You are a nutrition extraction assistant. When given a food image or nutrition label, 
-extract nutritional information and return it as valid JSON only (no markdown, no explanation).
-Return this exact structure:
-{
-  "food_name": "string",
-  "quantity": number,
-  "quantity_unit": "string (g, ml, oz, serving, etc.)",
-  "calories": number,
-  "protein_g": number,
-  "carbs_g": number,
-  "fat_g": number,
-  "fiber_g": number,
-  "sugar_g": number,
-  "sodium_mg": number,
-  "vitamin_c_mg": number,
-  "vitamin_d_iu": number,
-  "calcium_mg": number,
-  "iron_mg": number,
-  "confidence": "high|medium|low",
-  "notes": "any relevant notes about the extraction"
-}
-If a value cannot be determined, use 0. Estimate reasonable values for visible food if no label is present."""
+    system_prompt = """You are a nutrition extraction assistant. Respond with valid JSON only — no markdown, no explanation, no whitespace formatting.
+
+Return a single compact JSON object on one line like this:
+{"food_name":"...","quantity":100,"quantity_unit":"g","calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"fiber_g":0,"sugar_g":0,"sodium_mg":0,"vitamin_c_mg":0,"vitamin_d_iu":0,"calcium_mg":0,"iron_mg":0,"confidence":"high|medium|low","notes":"..."}
+
+Rules:
+- No newlines or spaces between fields — compact single line JSON only
+- If the label shows per 100g values, set quantity=100 and quantity_unit="g"
+- If a value cannot be determined, use 0
+- Never refuse — always return the JSON with your best estimates
+- confidence should reflect how clearly the label was visible"""
 
     messages = [{
         "role": "user",
@@ -142,22 +127,32 @@ If a value cannot be determined, use 0. Estimate reasonable values for visible f
             },
             {
                 "type": "text",
-                "text": "Please analyze this food image or nutrition label and extract the nutritional information as JSON."
+                "text": "Analyze this food image or nutrition label and return the nutritional information as JSON only."
             }
         ]
     }]
+
     contents = _build_gemini_contents(messages)
-    
 
     try:
         response_text = call_gemini(contents=contents, system=system_prompt, max_tokens=1024)
-        # Clean up response in case of markdown fences
+        logging.debug(f"RAW GEMINI RESPONSE: {repr(response_text)}")
         response_text = response_text.strip()
+
+        # Strip markdown fences if present (```json ... ``` or ``` ... ```)
         if response_text.startswith("```"):
-            response_text = response_text.split("\n", 1)[1].rsplit("```", 1)[0]
+            response_text = response_text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+
+        # If Gemini added any text before or after the JSON object, extract just the JSON
+        if not response_text.startswith("{"):
+            start = response_text.find("{")
+            end = response_text.rfind("}") + 1
+            if start != -1 and end > start:
+                response_text = response_text[start:end]
 
         nutrition_data = json.loads(response_text)
         return jsonify(nutrition_data)
+
     except json.JSONDecodeError:
         return jsonify({"error": "Failed to parse nutritional data from image"}), 422
     except Exception as e:
