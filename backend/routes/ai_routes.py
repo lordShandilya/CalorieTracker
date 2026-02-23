@@ -136,27 +136,59 @@ Rules:
 
     try:
         response_text = call_gemini(contents=contents, system=system_prompt, max_tokens=1024)
-        logging.debug(f"RAW GEMINI RESPONSE: {repr(response_text)}")
         response_text = response_text.strip()
 
-        # Strip markdown fences if present (```json ... ``` or ``` ... ```)
+        # Strip markdown fences
         if response_text.startswith("```"):
             response_text = response_text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
 
-        # If Gemini added any text before or after the JSON object, extract just the JSON
-        if not response_text.startswith("{"):
-            start = response_text.find("{")
-            end = response_text.rfind("}") + 1
-            if start != -1 and end > start:
-                response_text = response_text[start:end]
+        # Extract JSON object even if there is text around it
+        start = response_text.find("{")
+        end = response_text.rfind("}") + 1
+        if start == -1 or end == 0:
+            return jsonify({"error": "No JSON found in response"}), 422
+        response_text = response_text[start:end]
 
-        nutrition_data = json.loads(response_text)
+        # If truncated, attempt to close the JSON so partial data isn't lost
+        try:
+            nutrition_data = json.loads(response_text)
+        except json.JSONDecodeError:
+            # Count unclosed braces and close them to salvage partial response
+            open_braces = response_text.count("{") - response_text.count("}")
+            response_text = response_text.rstrip().rstrip(",") + ("}" * open_braces)
+            try:
+                nutrition_data = json.loads(response_text)
+            except json.JSONDecodeError:
+                return jsonify({"error": "Response was malformed. Please try again."}), 422
+        
+        defaults = {
+        "food_name": "Unknown Food",
+        "quantity": 100,
+        "quantity_unit": "g",
+        "calories": 0,
+        "protein_g": 0,
+        "carbs_g": 0,
+        "fat_g": 0,
+        "fiber_g": 0,
+        "sugar_g": 0,
+        "sodium_mg": 0,
+        "vitamin_c_mg": 0,
+        "vitamin_d_iu": 0,
+        "calcium_mg": 0,
+        "iron_mg": 0,
+        "confidence": "low",
+        "notes": ""
+        }
+        # Only fill missing keys — never overwrite what Gemini returned
+        for key, value in defaults.items():
+            nutrition_data.setdefault(key, value)
+
         return jsonify(nutrition_data)
-
     except json.JSONDecodeError:
         return jsonify({"error": "Failed to parse nutritional data from image"}), 422
     except Exception as e:
         return jsonify({"error": f"Image analysis failed: {str(e)}"}), 500
+
 
 
 @ai_bp.route("/chat", methods=["POST"])
