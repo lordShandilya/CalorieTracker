@@ -80,22 +80,20 @@ export default function Reports() {
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Nutrition Reports</h1>
-          <p style={{ color: '#6b7280', margin: '4px 0 0', fontSize: 14 }}>Visualize your dietary patterns and trends</p>
-        </div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}> Nutrition Reports</h1>
+          <p style={{ color: 'var(--text-muted)', margin: '4px 0 0', fontSize: 14 }}>Visualize your dietary patterns and trends</p></div>
         <div style={{ display: 'flex', gap: 6 }}>
           {['week', 'month'].map(p => (
             <Button key={p} size="sm" variant={period === p ? 'primary' : 'ghost'} onClick={() => setPeriod(p)}>
               {p === 'week' ? 'Last 7 Days' : 'Last 30 Days'}
             </Button>
           ))}
-        </div>
-      </div>
+        </div></div>
 
       <ErrorBanner message={error} onDismiss={() => setError('')} />
 
       {/* Tab nav */}
-      <div style={{ display: 'flex', gap: 2, background: '#f1f5f9', borderRadius: 10, padding: 4, marginBottom: 20 }}>
+      <div style={{ display: 'flex', gap: 2, background: 'var(--bg-elevated)', borderRadius: 10, padding: 4, marginBottom: 20 }}>
         {tabs.map(t => (
           <button key={t} onClick={() => setActiveTab(t)} style={{
             flex: 1, padding: '8px 0', border: 'none', borderRadius: 8, cursor: 'pointer',
@@ -124,8 +122,7 @@ export default function Reports() {
                   return <>
                     <StatTile label="Avg Daily Calories" value={Math.round(totalCal / days)} unit=" kcal" color="#10b981" />
                     <StatTile label="Days Tracked" value={daily.length} color="#6366f1" />
-                    <StatTile label="Total Calories" value={Math.round(totalCal)} unit=" kcal" color="#f59e0b" />
-                  </>;
+                    <StatTile label="Total Calories" value={Math.round(totalCal)} unit=" kcal" color="#f59e0b" /></>;
                 })()}
               </div>
 
@@ -133,16 +130,13 @@ export default function Reports() {
                 <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 700 }}>Daily Calorie Intake</h3>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={daily.map(d => ({ date: d.date.slice(5), calories: Math.round(d.calories || 0) }))}>
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 11 }} />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
                     <Tooltip formatter={(v) => [`${v} kcal`, 'Calories']} />
                     {goals.daily_calories && (
                       <Line type="monotone" dataKey={() => goals.daily_calories} stroke="#ef4444" strokeDasharray="5 5" name="Goal" />
                     )}
-                    <Bar dataKey="calories" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </Card>
+                    <Bar dataKey="calories" fill="#6366f1" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer></Card>
 
               <Card>
                 <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 700 }}>Daily Macros Breakdown</h3>
@@ -153,17 +147,13 @@ export default function Reports() {
                     Carbs: Math.round(d.carbs_g || 0),
                     Fat: Math.round(d.fat_g || 0),
                   }))}>
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 11 }} />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
                     <Tooltip />
                     <Legend />
                     <Bar dataKey="Protein" stackId="a" fill={COLORS.protein} />
                     <Bar dataKey="Carbs" stackId="a" fill={COLORS.carbs} />
-                    <Bar dataKey="Fat" stackId="a" fill={COLORS.fat} radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </Card>
-            </>
+                    <Bar dataKey="Fat" stackId="a" fill={COLORS.fat} radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer></Card></>
           )}
 
           {/* Macros tab */}
@@ -179,9 +169,7 @@ export default function Reports() {
                           {macropieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                         </Pie>
                         <Tooltip formatter={(v, n) => [`${v}g`, n]} />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
+                        <Legend /></PieChart></ResponsiveContainer>
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 12 }}>
                       {macropieData.map(m => {
                         const total = macropieData.reduce((s, d) => s + d.value, 0);
@@ -189,14 +177,12 @@ export default function Reports() {
                         return (
                           <div key={m.name} style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: 18, fontWeight: 700, color: m.color }}>{m.value}g</div>
-                            <div style={{ fontSize: 11, color: '#9ca3af' }}>{m.name} ({pct}%)</div>
-                          </div>
+                            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{m.name} ({pct}%)</div></div>
                         );
                       })}
-                    </div>
-                  </>
+                    </div></>
                 ) : (
-                  <p style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>No data for this period</p>
+                  <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px 0' }}>No data for this period</p>
                 )}
               </Card>
 
@@ -209,17 +195,13 @@ export default function Reports() {
                     Carbs: Math.round(d.carbs_g || 0),
                     Fat: Math.round(d.fat_g || 0),
                   }))}>
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 11 }} />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
                     <Tooltip />
                     <Legend />
                     <Line type="monotone" dataKey="Protein" stroke={COLORS.protein} strokeWidth={2} dot={false} />
                     <Line type="monotone" dataKey="Carbs" stroke={COLORS.carbs} strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="Fat" stroke={COLORS.fat} strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
-            </div>
+                    <Line type="monotone" dataKey="Fat" stroke={COLORS.fat} strokeWidth={2} dot={false} /></LineChart></ResponsiveContainer></Card></div>
           )}
 
           {/* Goals tab */}
@@ -230,35 +212,31 @@ export default function Reports() {
                 <>
                   <ResponsiveContainer width="100%" height={280}>
                     <BarChart data={goalCompData} layout="vertical">
-                      <XAxis type="number" tick={{ fontSize: 11 }} />
-                      <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={80} />
+                      <XAxis type="number" tick={{ fontSize: 11, fill: '#64748b' }} />
+                      <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} width={80} />
                       <Tooltip />
                       <Legend />
                       <Bar dataKey="goal" fill="#e5e7eb" name="Goal" radius={[0, 4, 4, 0]} />
-                      <Bar dataKey="actual" fill="#6366f1" name="Actual" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                      <Bar dataKey="actual" fill="#6366f1" name="Actual" radius={[0, 4, 4, 0]} /></BarChart></ResponsiveContainer>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginTop: 20 }}>
                     {goalCompData.map(d => {
                       const pct = d.goal ? Math.round((d.actual / d.goal) * 100) : 0;
                       const over = pct > 100;
                       return (
-                        <div key={d.name} style={{ padding: '12px 16px', background: '#f9fafb', borderRadius: 10 }}>
-                          <p style={{ margin: 0, fontSize: 12, color: '#9ca3af' }}>{d.name}</p>
+                        <div key={d.name} style={{ padding: '12px 16px', background: 'var(--bg-elevated)', borderRadius: 10 }}>
+                          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{d.name}</p>
                           <p style={{ margin: '4px 0', fontSize: 20, fontWeight: 700, color: over ? '#ef4444' : '#6366f1' }}>
                             {pct}%
                           </p>
-                          <p style={{ margin: 0, fontSize: 11, color: '#9ca3af' }}>
-                            {d.actual} / {d.goal} {over ? '⚠️ over goal' : '✓'}
-                          </p>
-                        </div>
+                          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>
+                            {d.actual} / {d.goal} {over ? ' over goal' : ''}
+                          </p></div>
                       );
                     })}
-                  </div>
-                </>
+                  </div></>
               ) : (
-                <p style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>
+                <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px 0' }}>
                   Set goals in the Goals page to see comparisons
                 </p>
               )}
@@ -270,17 +248,14 @@ export default function Reports() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               <Card>
                 <h3 style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 700 }}>Micronutrient Coverage</h3>
-                <p style={{ color: '#9ca3af', fontSize: 12, margin: '0 0 16px' }}>% of daily recommended intake</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: 12, margin: '0 0 16px' }}>% of daily recommended intake</p>
                 <ResponsiveContainer width="100%" height={260}>
                   <RadarChart data={microRadar}>
                     <PolarGrid />
-                    <PolarAngleAxis dataKey="nutrient" tick={{ fontSize: 11 }} />
+                    <PolarAngleAxis dataKey="nutrient" tick={{ fontSize: 11, fill: '#64748b' }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10 }} />
                     <Radar name="Intake" dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} />
-                    <Tooltip formatter={(v) => [`${v}%`, '% RDA']} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </Card>
+                    <Tooltip formatter={(v) => [`${v}%`, '% RDA']} /></RadarChart></ResponsiveContainer></Card>
 
               <Card>
                 <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 700 }}>Daily Averages</h3>
@@ -300,18 +275,14 @@ export default function Reports() {
                         <div key={name}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                             <span style={{ fontSize: 13, fontWeight: 500 }}>{name}</span>
-                            <span style={{ fontSize: 12, color: '#6b7280' }}>{v} {unit} / {rda} {unit} ({pct}%)</span>
-                          </div>
-                          <div style={{ background: '#f1f5f9', borderRadius: 4, height: 5 }}>
-                            <div style={{ height: '100%', borderRadius: 4, background: pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#f43f5e', width: `${pct}%` }} />
-                          </div>
-                        </div>
+                            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{v} {unit} / {rda} {unit} ({pct}%)</span></div>
+                          <div style={{ background: 'var(--bg-elevated)', borderRadius: 4, height: 5 }}>
+                            <div style={{ height: '100%', borderRadius: 4, background: pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#f43f5e', width: `${pct}%` }} /></div></div>
                       );
                     })}
                   </div>
                 )}
-              </Card>
-            </div>
+              </Card></div>
           )}
         </>
       )}

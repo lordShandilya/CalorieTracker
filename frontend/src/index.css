@@ -1,17 +1,42 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-base:       #0f1117;
+  --bg-surface:    #1a1d27;
+  --bg-elevated:   #22263a;
+  --bg-hover:      #2a2f45;
+  --border:        #2e3350;
+  --border-subtle: #252840;
+  --text-primary:  #f1f5f9;
+  --text-secondary:#94a3b8;
+  --text-muted:    #64748b;
+  --accent:        #6366f1;
+  --accent-dim:    #312e81;
+  --accent-glow:   rgba(99,102,241,0.15);
+  --success:       #22c55e;
+  --danger:        #ef4444;
+  --warning:       #f59e0b;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f8fafc;
-  color: #111827;
+  background: var(--bg-base);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
 input:focus, select:focus, textarea:focus {
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
+
+/* Dark select/option dropdowns */
+option { background: #1a1d27; color: #f1f5f9; }
